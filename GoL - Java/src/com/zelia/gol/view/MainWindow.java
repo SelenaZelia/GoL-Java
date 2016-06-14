@@ -14,11 +14,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import com.zelia.gol.model.Board;
 
 public class MainWindow extends JFrame {
- 	class CellComp extends JLabel implements MouseListener {
+	class CellComp extends JLabel implements MouseListener {
 		private static final long serialVersionUID = 1L;
 		private int x, y;
 		private boolean active = false;
@@ -33,7 +36,7 @@ public class MainWindow extends JFrame {
 			checkColor();
 
 			addMouseListener(this);
-			setPreferredSize(new Dimension(20, 20));
+			setPreferredSize(new Dimension(5, 5));
 		}
 
 		public void changeState() {
@@ -42,10 +45,13 @@ public class MainWindow extends JFrame {
 		}
 
 		private void checkColor() {
-			if (!active)
+			if (!active) {
 				setBackground(Color.white);
-			else
+				setForeground(Color.black);
+			} else {
 				setBackground(Color.black);
+				setForeground(Color.white);
+			}
 		}
 
 		public boolean getState() {
@@ -69,9 +75,13 @@ public class MainWindow extends JFrame {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			active = !active;
-			checkColor();
-			CellChanged(x, y);
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				active = !active;
+				checkColor();
+				CellChanged(x, y);
+			} else if (SwingUtilities.isMiddleMouseButton(e)) {
+				setCurCellInfos("Cell " + x + ";" + y + " - alive : " + active);
+			}
 		}
 
 		@Override
@@ -84,13 +94,15 @@ public class MainWindow extends JFrame {
 	private int xS, yS;
 	private Board board;
 
+	private JLabel currCellInfos;
+	private JSpinner spinner;
 	private CellComp cells[][];
 
-	public MainWindow(Board board) {
+	public MainWindow() {
 		super("Conway's Game of Life");
+		this.board = new Board(40, 40);
 		xS = board.getBoardX();
 		yS = board.getBoardY();
-		this.board = board;
 		initComp();
 		initProps();
 	};
@@ -103,11 +115,16 @@ public class MainWindow extends JFrame {
 	private void initComp() {
 
 		setLayout(new BorderLayout());
+		JPanel infosPan = new JPanel();
 		JPanel boardPan = new JPanel();
 		JPanel controlPan = new JPanel();
 
+		// infosPan
+		currCellInfos = new JLabel("x;y - state");
+		infosPan.add(currCellInfos);
+
 		// boardPan
-		GridLayout gl = new GridLayout(xS, yS,3,3);
+		GridLayout gl = new GridLayout(xS, yS, 3, 3);
 		boardPan.setLayout(gl);
 
 		cells = new CellComp[xS][yS];
@@ -119,7 +136,10 @@ public class MainWindow extends JFrame {
 			}
 		}
 		// controlPan
-		JButton nextStep = new JButton("Step >");
+		spinner = new JSpinner();
+		spinner.setModel(new SpinnerNumberModel(10, 1, Integer.MAX_VALUE, 1));
+
+		JButton nextStep = new JButton("Next Step");
 		nextStep.addActionListener(new ActionListener() {
 
 			@Override
@@ -128,6 +148,20 @@ public class MainWindow extends JFrame {
 				refreshGUI();
 			}
 		});
+
+		JButton nextXStep = new JButton("Next x Step");
+		nextXStep.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Number max = ((SpinnerNumberModel) spinner.getModel()).getNumber();
+				int max_int = max.intValue();
+				for (int i = 0; i < max_int; ++i)
+					board.nextGen();
+				refreshGUI();
+			}
+		});
+
 		JButton randomize = new JButton("Randomize");
 		randomize.addActionListener(new ActionListener() {
 
@@ -139,10 +173,24 @@ public class MainWindow extends JFrame {
 			}
 		});
 
+		JButton clear = new JButton("Clear");
+		clear.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				board.clear();
+				refreshGUI();
+			}
+		});
+
 		controlPan.add(nextStep);
+		controlPan.add(spinner);
+		controlPan.add(nextXStep);
 		controlPan.add(randomize);
+		controlPan.add(clear);
 
 		// Frame
+		add(infosPan, BorderLayout.NORTH);
 		add(controlPan, BorderLayout.SOUTH);
 		add(boardPan, BorderLayout.CENTER);
 	}
@@ -158,6 +206,10 @@ public class MainWindow extends JFrame {
 				if (board.getCell(x, y) != cells[x][y].getState())
 					cells[x][y].changeState();
 
+	}
+
+	private void setCurCellInfos(String text) {
+		currCellInfos.setText(text);
 	}
 
 }
