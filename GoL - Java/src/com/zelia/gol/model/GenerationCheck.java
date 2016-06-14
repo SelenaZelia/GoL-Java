@@ -1,4 +1,4 @@
-package com.zelia.gol.logic;
+package com.zelia.gol.model;
 
 /*
  * Any live cell with fewer than two live neighbours dies, as if caused by under-population.

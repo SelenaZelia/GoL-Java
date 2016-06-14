@@ -1,4 +1,4 @@
-package com.zelia.gol.logic;
+package com.zelia.gol.model;
 
 import java.util.Random;
 
@@ -26,8 +26,7 @@ public class Board {
 		gc = new GenerationCheck();
 		board = new boolean[x][y];
 				
-		if(Debug.debug) 
-			System.out.println("Board created [" + x + "," + y +"]");
+		System.out.println("Board created [" + x + "," + y +"]");
 	}
 	
 	// Public Methods 
@@ -67,6 +66,17 @@ public class Board {
 	// getters
 	public boolean[][] getBoard(){
 		return board;
+	}
+	
+	public boolean getCell(int x, int y){
+		return board[x][y];
+	}
+
+	public int getBoardX(){ return board.length;}
+	public int getBoardY(){ return board[0].length;}
+
+	public void switchCellState(int x, int y) {
+		board[x][y] = !board[x][y];
 	}
 	
 }
