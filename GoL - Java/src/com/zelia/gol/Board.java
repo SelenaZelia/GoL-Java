@@ -5,10 +5,16 @@ import java.util.Random;
 public class Board {
 	private boolean board[][];
 	private int generation;
+	private GenerationCheck gc;
 
 	// CSTOR
 	public Board(){
 		createBoard(10,10);
+	}
+	
+	public Board(boolean board[][]){
+		createBoard(board.length,board[0].length);
+		this.board = board;
 	}
 	
 	public Board(int x, int y){
@@ -17,6 +23,7 @@ public class Board {
 	
 	// Private Methods
 	private void createBoard(int x, int y){
+		gc = new GenerationCheck();
 		board = new boolean[x][y];
 				
 		if(Debug.debug) 
@@ -35,8 +42,7 @@ public class Board {
 	
 	public void nextGen(){
 		++generation;
-		
-		
+		board = gc.startCheckup(board);
 	}
 	
 	
@@ -51,6 +57,7 @@ public class Board {
 			}
 			System.out.println(" |");
 		}
+		gc.displayInfos();
 	}
 	
 }
