@@ -1,9 +1,14 @@
 package com.zelia.gol;
 
+/*
+ * Hello world program
+ */
 public class Program {
 
 	public static void main(String[] args) {
-		System.out.println("Hello world");
+		Board b = new Board(10,10);
+		b.randomizeBoard(128390L);
+		b.display();
 	}
 
 }
