@@ -1,4 +1,4 @@
-package com.zelia.gol;
+package com.zelia.gol.logic;
 
 /*
  * Hello world program

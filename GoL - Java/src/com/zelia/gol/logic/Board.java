@@ -1,4 +1,4 @@
-package com.zelia.gol;
+package com.zelia.gol.logic;
 
 import java.util.Random;
 
@@ -45,6 +45,10 @@ public class Board {
 		board = gc.startCheckup(board);
 	}
 	
+	public void changeCell(int x, int y){
+		board[x][y] = !board[x][y];
+	}
+	
 	
 	public void display(){
 		System.out.println("= Gen " + generation + " ====");
@@ -58,6 +62,11 @@ public class Board {
 			System.out.println(" |");
 		}
 		gc.displayInfos();
+	}
+	
+	// getters
+	public boolean[][] getBoard(){
+		return board;
 	}
 	
 }
